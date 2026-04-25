@@ -25,7 +25,7 @@ public class Main {
                 shoppingMenu();
                 break;
             case 2:
-                Cart();
+                displayCart();
                 break;
             case 3:
                 break;
@@ -35,6 +35,7 @@ public class Main {
        }while(command != 3);
 
     }
+
 
     /**
      * loads the csv file splits it and loads it into a simple arraylist inventory
@@ -95,7 +96,7 @@ public class Main {
                 filter();
                 break;
             case 4:
-                //addToCart()
+                processCart();
                 break;
             case 5:
                 break;
@@ -125,7 +126,7 @@ public class Main {
         int command;
         do{
             command = Console.promptForInt("""
-                    1: Procced with search by name:
+                    1: Proceed with search by name:
                     2: Go back""",1,2);
             switch (command){
                 case 1:
@@ -178,7 +179,7 @@ public class Main {
         int command;
         do{
             command = Console.promptForInt("""
-                    1: Procced with search:
+                    1: Proceed with search:
                     2: Go back""",1,2);
             switch (command) {
                 case 1:
@@ -203,7 +204,7 @@ public class Main {
         int command;
         do{
             command = Console.promptForInt("""
-                    1: Procced with search:
+                    1: Proceed with search:
                     2: Go back""",1,2);
             switch (command) {
                 case 1:
@@ -224,57 +225,56 @@ public class Main {
         }
 
     /**
+     * creates the cart hash map
+     * @return the hashmap
+     */
+    private static HashMap<String, Cart> getCart() {
+        HashMap<String, Cart> cart = new HashMap<>();
+        return cart;
+    }
+
+    /**
+     * Asks the user for name look for it and send the required param to addToCart(
+     */
+    private static void processCart() {
+        HashMap<String, Product> inventory = getInventoryKeyName(getInventory());
+        String name = Console.promptForString("Enter the Name of the product");
+        Product matched = inventory.get(name);
+        if(matched!=null){
+        addToCart(name,matched.getPrice());
+        }else{
+            System.out.println("No match found! Try again");
+        }
+
+    }
+    /**
+     * gets names and price and adds it to the cart if item already in cart increases the quantity
+     * @param name of the item
+     * @param price of the item
+     */
+    private static void addToCart(String name, float price) {
+        HashMap<String, Cart> cart = getCart();
+        Cart matched = cart.get(name);
+        if(matched == null){
+        cart.put(name,new Cart(name,price,1));}
+        else{
+            //todo rethink the logic
+            cart.put(name,new Cart(name,price, matched.getQuantity()+1));
+        }}
+    /**
+     * displays the Cart details in a table format
+     */
+    private static void displayCart() {
+        System.out.println("I run");
+        for(Cart c : getCart().values()){
+        System.out.printf("%-35s %-15.2f %-15d\n", c.getName(),c.getPrice(),c.getQuantity());
+        }
+    }
+    /**
      * displays the product details in a table format
      * @param p takes a Product class as parameter
      */
     private static void displayProducts(Product p) {
         System.out.printf("%-15s %-35s %-15.2f %-15s\n", p.getSku(), p.getName(),p.getPrice(),p.getDepartment());
     }
-
-    /**
-     * displays all the items inside the cart lets user checkout or remove items
-     */
-    private static void addToCart(String name, float price) {
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    /**
-//     * get arraylist inventory and turns it into hashmap inventory with department as key
-//     * @param inventory as arraylist
-//     * @return inventory as HashMap with department key
-//     */
-//    private static HashMap<String, Product> getInventoryKeyDepartment(ArrayList<Product>  inventory) {
-//        HashMap<String,Product> inventoryWithKey = new HashMap<>();
-//        for(Product p : inventory){
-//            inventoryWithKey.put(p.getDepartment(),p);
-//        }
-//        return inventoryWithKey;
-//    }
-//    /**
-//     * get arraylist inventory and turns it into hashmap inventory with price as key
-//     * @param inventory as arraylist
-//     * @return inventory as HashMap with price key
-//     */
-//    private static HashMap<Float, Product> getInventoryKeyPrice(ArrayList<Product>  inventory) {
-//        HashMap<Float,Product> inventoryWithKey = new HashMap<>();
-//        for(Product p : inventory){
-//            inventoryWithKey.put(p.getPrice(),p);
-//        }
-//        return inventoryWithKey;
-//    }
 }
