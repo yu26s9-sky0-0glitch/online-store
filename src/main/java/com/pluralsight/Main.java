@@ -8,6 +8,7 @@ import java.util.HashMap;
 import com.pluralsight.ui.Console;
 
 public class Main {
+    static HashMap<String, Cart> cart = new HashMap<>();
     static void main(){
 
         ArrayList<Product> inventory = getInventory();
@@ -224,14 +225,6 @@ public class Main {
             } }while (command!=2);
         }
 
-    /**
-     * creates the cart hash map
-     * @return the hashmap
-     */
-    private static HashMap<String, Cart> getCart() {
-        HashMap<String, Cart> cart = new HashMap<>();
-        return cart;
-    }
 
     /**
      * Asks the user for name look for it and send the required param to addToCart(
@@ -253,20 +246,20 @@ public class Main {
      * @param price of the item
      */
     private static void addToCart(String name, float price) {
-        HashMap<String, Cart> cart = getCart();
         Cart matched = cart.get(name);
         if(matched == null){
         cart.put(name,new Cart(name,price,1));}
         else{
-            //todo rethink the logic
-            cart.put(name,new Cart(name,price, matched.getQuantity()+1));
-        }}
+            matched.setQuantity(matched.getQuantity()+1);
+        }
+        System.out.println("Added Successfully!!");
+    }
     /**
      * displays the Cart details in a table format
      */
     private static void displayCart() {
-        System.out.println("I run");
-        for(Cart c : getCart().values()){
+        for(Cart c : cart.values()){
+        System.out.printf("%-35s %-15.2s %-15s\n", "Product Name","Price","Quantity");
         System.out.printf("%-35s %-15.2f %-15d\n", c.getName(),c.getPrice(),c.getQuantity());
         }
     }
