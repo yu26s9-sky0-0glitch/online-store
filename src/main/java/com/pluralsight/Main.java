@@ -9,6 +9,7 @@ import com.pluralsight.ui.Console;
 
 public class Main {
     static void main(){
+
         ArrayList<Product> inventory = getInventory();
         HashMap<String, Product> inventoryKeyName = getInventoryKeyName(inventory);
        int command;
@@ -19,11 +20,9 @@ public class Main {
                    2: Display Cart
                    3: Exit""",1,3);
 
-       }while(command != 3);
-
         switch (command){
             case 1:
-                shoppingMenu(inventory,inventoryKeyName);
+                shoppingMenu();
                 break;
             case 2:
                 Cart();
@@ -33,12 +32,9 @@ public class Main {
             default:
                 System.out.println("invalid input try again!");
         }
-
-
-
+       }while(command != 3);
 
     }
-
 
     /**
      * loads the csv file splits it and loads it into a simple arraylist inventory
@@ -77,16 +73,169 @@ public class Main {
 
     /**
      * display the list of products the store sells lets customer search filter add to cart and go back to main menu
-     * @param inventory as arraylist for sorting by price and department
-     * @param inventoryKeyName as hashmap for sorting through name
      */
-    private static void shoppingMenu(ArrayList<Product> inventory, HashMap<String, Product> inventoryKeyName) {
+    private static void shoppingMenu() {
+        int command;
+        do{
+            command = Console.promptForInt("""
+                   Select an Option:
+                   1: Display all Product
+                   2: Search by name
+                   3: Filter
+                   4: Add to Cart
+                   5: Go back""",1,5);
+        switch (command) {
+            case 1:
+                allProducts();
+                break;
+            case 2:
+                lookupByName();
+                break;
+            case 3:
+                filter();
+                break;
+            case 4:
+                //addToCart()
+                break;
+            case 5:
+                break;
+            default:
+                System.out.println("invalid input try again!");
+        }
+        }while(command != 5);
+
+
+    }
+
+
+
+    /**
+     * goes through all Products in arraylist inventory and send each one to displayProduct for displaying
+     */
+    private static void allProducts() {
+        for( Product p:getInventory()){
+            displayProducts(p);
+        }
+    }
+
+    /**
+     * Give the user the option to look for an item by its name
+     */
+    private static void lookupByName() {
+        int command;
+        do{
+            command = Console.promptForInt("""
+                    1: Procced with search by name:
+                    2: Go back""",1,2);
+            switch (command){
+                case 1:
+                    String name = Console.promptForString("Enter the product name: ");
+                    Product matchedProduct = getInventoryKeyName(getInventory()).get(name);
+                    if(matchedProduct!=null){
+                        displayProducts(matchedProduct);
+                    }
+                    else{
+                        System.out.println("opps! Look like we don't have that item");
+                    }
+                    break;
+                case 2:
+                    break;
+                default:
+                    System.out.println("Invalid input! Try Again!!");
+            }
+        }while (command!=2);
+    }
+
+    /**
+     * asks user for filter criteria and displays the eligible items
+     */
+    private static void filter() {
+        int command;
+        do{
+            command = Console.promptForInt("""
+                    1: Filter by Price:
+                    2: Filter by Department
+                    3: Go back""",1,3);
+            switch (command){
+                case 1:
+                    filterByPrice();
+                    break;
+                case 2:
+                    filterByDepartment();
+                    break;
+                case 3:
+                    break;
+                default:
+                    System.out.println("Invalid input! Try Again!!");
+            }
+        }while (command!=3);
+    }
+
+    /**
+     * Asks the user for a department and displays all products in said department
+     */
+    private static void filterByDepartment() {
+        int command;
+        do{
+            command = Console.promptForInt("""
+                    1: Procced with search:
+                    2: Go back""",1,2);
+            switch (command) {
+                case 1:
+                    String department = Console.promptForString("Enter the department name:");
+                    for (Product p : getInventory()) {
+                        if (p.getDepartment().equalsIgnoreCase(department)) {
+                            displayProducts(p);
+                        }}
+                        break;
+                        case 2:
+                            break;
+                        default:
+                            System.out.println("Invalid input! Try Again!!");
+            }}while (command!=2);
+
+    }
+
+    /**
+     * asks for price range and filters product according to it
+     */
+    private static void filterByPrice() {
+        int command;
+        do{
+            command = Console.promptForInt("""
+                    1: Procced with search:
+                    2: Go back""",1,2);
+            switch (command) {
+                case 1:
+                    System.out.println("Enter your price range!");
+                    float rangeStart = Console.promptForFloat("Enter the minimum:");
+                    float rangeEnd = Console.promptForFloat("Enter the maximum:");
+                    for (Product p : getInventory()) {
+                        if (p.getPrice() >= rangeStart && p.getPrice() <= rangeEnd) {
+                            displayProducts(p);
+                        }
+                    }
+                    break;
+                case 2:
+                    break;
+                default:
+                    System.out.println("Invalid input! Try Again!!");
+            } }while (command!=2);
+        }
+
+    /**
+     * displays the product details in a table format
+     * @param p takes a Product class as parameter
+     */
+    private static void displayProducts(Product p) {
+        System.out.printf("%-15s %-35s %-15.2f %-15s\n", p.getSku(), p.getName(),p.getPrice(),p.getDepartment());
     }
 
     /**
      * displays all the items inside the cart lets user checkout or remove items
      */
-    private static void Cart() {
+    private static void addToCart(String name, float price) {
+
     }
 
 
@@ -104,11 +253,11 @@ public class Main {
 
 
 
-    /**
-     * get arraylist inventory and turns it into hashmap inventory with department as key
-     * @param inventory as arraylist
-     * @return inventory as HashMap with department key
-     */
+//    /**
+//     * get arraylist inventory and turns it into hashmap inventory with department as key
+//     * @param inventory as arraylist
+//     * @return inventory as HashMap with department key
+//     */
 //    private static HashMap<String, Product> getInventoryKeyDepartment(ArrayList<Product>  inventory) {
 //        HashMap<String,Product> inventoryWithKey = new HashMap<>();
 //        for(Product p : inventory){
